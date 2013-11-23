@@ -6,5 +6,6 @@ I think I should mention that even though I'm using javascript, my goal here is 
 
 ## Files
 
-* [Hello, Engine!](https://github.com/koganei/BeginnerGameDesign/tree/master/HelloEngine "My First Engine!")
-* [Component Engine](https://github.com/koganei/BeginnerGameDesign/tree/master/ComponentEngine "Design based on the Component Pattern")
+* [Hello, Engine!](https://github.com/koganei/BeginnerGameDesign/blob/master/HelloEngine/helloengine.html "My First Engine!")
+* [Component Engine](https://github.com/koganei/BeginnerGameDesign/blob/master/ComponentEngine/componentengine.html "Design based on the Component Pattern")
+* [Isometric Plane in CSS](https://github.com/koganei/BeginnerGameDesign/blob/master/IsometricPlane/isometricplane.html "The CSS for an isometric plane")
