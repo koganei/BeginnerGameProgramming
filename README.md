@@ -6,4 +6,4 @@ I think I should mention that even though I'm using javascript, my goal here is 
 
 ## Files
 
-* Hello, Engine!
+* [Hello, Engine!](https://github.com/koganei/BeginnerGameDesign/tree/master/HelloEngine "My First Engine!")
