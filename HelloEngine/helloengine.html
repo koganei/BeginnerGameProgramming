@@ -1,0 +1,369 @@
+<html lang="en">
+<head>
+  <script>
+    /**
+     * Basic Game Engine
+     *
+     * Just a basic game engine test while I'm reading the book at
+     * http://gameprogrammingpatterns.com, it's a pretty good book.
+     * You should read it. Anyways, I figured that I would start with
+     * a basic pattern, but not the most basic one. Just having one
+     * update loop with all the code in it would be boring. So I
+     * thought I would make the Hero an object that got updated every time.
+     *
+     * Notes:
+     *  - Here's a neat trick I found: if I set my body to a specific
+     *    amount of pixels programmatically, I can dynamically change
+     *    what '1em' means in CSS. So by using a scale variable, I can make
+     *    the entire game bigger/smaller super easily~
+     *
+     * 
+     * @author Marc Khoury (khoury.marc@gmail.com)
+     * @date November 21st 2013
+     * 
+     */
+  </script>
+  <meta charset="utf-8">
+
+  <title>Hello Engine - Koganei's Game Design from a Beginner</title>
+  <meta name="description" content="first test at a game design engine">
+  <meta name="author" content="Marc Khoury">
+
+  <style>
+    #world {
+      position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        /* clips to bottom */
+      
+      background: #333;
+    }
+
+    .tile {
+      float: left;
+      width: 1em;
+      height: 1em;
+      background: #deb074;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+    }
+
+    .edge {
+      clear: both;
+    }
+
+    #world span {
+      position: absolute;
+      width: 1em;
+      height: 1em;
+    }
+
+    .hero {
+      background: red;
+      border-radius: 50%;
+      
+      -webkit-transition: left 0.1s, top 0.1s;
+      transition: top 0.1s, left 0.1s;
+    }
+  </style>
+  <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+</head>
+
+<body>
+  <div id="world"></div>
+
+  <script>
+  $(function() {
+
+    (function() {
+
+      // CONSTANTS
+      var
+
+        /**
+         * width of the world. The unit here is a square.
+         */
+        WIDTH    = 20,
+
+        /**
+         * height of the world. The unit here is a square.
+         */
+        HEIGHT   = 20,
+
+        /**
+         * when scale = 1, 12px = 1em.
+         */
+        SCALE    = 2,
+
+        /**
+         * the grid size for the map
+         */
+        MAP_SIZE = WIDTH * HEIGHT,
+
+        // we'll set the setTimeout of the loop to be 1000/FPS_RATE
+        FPS_RATE = 60;
+      
+      // WORLD PROPERTIES
+      var
+
+        /**
+         * the main div containing the world. I chose not to make an object here
+         * mainly because I didn't start out with one and then never needed one because
+         * the closure acts as one
+         * @type {jQuery object}
+         */
+        _$world  = $('#world'),
+
+        /**
+         * an array containing the map. The pattern of using [WIDTH * HEIGHT] for 2 arrays
+         * seems to be less used in javascript, but I'm using it now because the C++ examples
+         * in gameprogrammingpatterns.com did, and I thought I'd try it out. It's tricky because
+         * you have to do ((WIDTH * y) + x) to get the array you need, unlike [x][y].
+         * @type {Array}
+         */
+        _map     = [],
+
+        /**
+         * will contain all the objects that need updating.
+         * I didn't both trying to check for active/inactive or anything
+         * @type {Object}
+         */ 
+        _objects = {},
+
+        /**
+         * DOM events. I thought I would catch the DOM events anything in the app would need
+         * and simply register its state in the variable. When the event is present, I pass the
+         * event argument from the event handler. Objects can check during their loop
+         * @type {Object}
+         */
+        _events = {
+          mousedown: false
+        };
+
+      /**
+       * World Initialization function
+       */
+      var init = function() {
+
+        // we set the scale of the world
+        // passing from javascript to css by using the body's em value
+        $('body').css('font-size', (12 * SCALE) + 'px');
+        
+        // we create the world tiles
+        var $map = $('<div id="map"></div>');
+        for(var i = 0; i < MAP_SIZE; i++) {
+          
+          // create a div for every tile
+          _map[i] = $('<div class="tile"></div>');
+
+          // break line at every WIDTH
+          if((i % WIDTH) == 0) {
+            _map[i].addClass('edge');
+          }
+
+          // add the tile to the map
+          $map.append(_map[i]);
+        }
+
+        // add the map to the world
+        _$world.append($map);
+        
+        // we make a default layer. I could have made a layers property that
+        // contains them all and whatnot, but I thought I'd just use the div id
+        // for this engine.
+        _$world.append('<div class="layer" id="layer-main" data-name="main"></div>');
+        
+        // we create a hero and add it to the layer and the objects. The Hero factory
+        // returns me a hero, with its main div on its el property. Already we can see
+        // a sign of bad coding, there's a chance the layer and the objects will
+        // be mismatched. We should have a function to add objects to the world.
+        // Also, the name 'redhero' is hardcoded in the function. The hero should be given
+        // a name and that name should be used when instantiating it.
+        var redhero = Hero();
+        $('#layer-main').append(redhero.el);
+        _objects['redhero'] = redhero;
+        
+        // we make another hero, but green this time with a nice options object in the Hero
+        // constructor
+        var greenhero = Hero({
+          color: 'green'
+        });
+
+        // we make him move so we can distinguish him from the red hero on the map
+        greenhero.move(3, 2);
+        $('#layer-main').append(greenhero.el);
+        _objects['greenhero'] = greenhero;
+        
+        // we make sure the event binding is there
+        setUpEvents();
+      }
+
+
+      // CORE
+
+      /**
+       * This is the very very core of the engine. Everything passes through here.
+       * the game will initialize, then loop every (1000/FPS_RATE)ms. In that loop, we'll
+       * make sure the game updates by updating every object in it.
+       */
+      init();
+      gameLoop();
+
+      function gameLoop() {
+        update();
+        
+        setTimeout(function() {
+          gameLoop();
+        }, 1000/FPS_RATE);
+      }
+
+      /**
+       * As I understand it, in a traditional gaming engine, we would have
+       * had to render the visuals in that loop as well, but javascript
+       * is nice enough that we'll let it take care of the rendering for
+       * this engine.
+       */
+      function update() {
+        for(var objIndex in _objects) {
+          if(_objects.hasOwnProperty(objIndex)) {
+            _objects[objIndex].update();
+          }
+        }
+      }
+      
+      /**
+       * We set up the events. For now I only put mousedown, but it could but done
+       * for anything else. I suppose a good reason to do this is to manage the flow
+       * of things changing in the game. If you want your hero to attack on a click,
+       * you have to time it with the enemy dying.
+       */
+      function setUpEvents() {
+        _$world.mousedown(function(e) {
+          e.preventDefault();
+          _events['mousedown'] = e;
+        });
+        
+        _$world.mouseup(function(e) {
+          e.preventDefault();
+          _events['mousedown'] = false;
+        });
+      }
+      
+      /**
+       * Hero factory. We give it some default options to make them easy to spawn.
+       * I could have done a more traditional pattern for this, like extending the
+       * prototype, but this seemed to work well with the results needed.
+       */
+      function Hero(options) {
+        defaultOptions = {
+          health: 10,
+          attack: 1,
+          layer: 'main',
+          sprite: 'hero',
+          color: 'red',
+          start: {
+            x: WIDTH/2,
+            y: HEIGHT/2
+          }
+        }        
+        options = $.extend(defaultOptions, options);
+
+        // init. We can do things like check for other heroes here or do some
+        // more static stuff
+        var $hero = $('<span class="hero"></span>');
+        $hero.css('left', options.start.x + 'em');
+        $hero.css('top', options.start.y + 'em');
+        $hero.css('background', options.color);
+        $hero.addClass('sprite-'+ options.sprite);
+
+        // This is the factory part! We make a hero, able to move and update on its own.
+        var newHero = {
+
+          /**
+           * The div of the hero.
+           * @type {jQuery}
+           */
+          el: $hero,
+
+          /**
+           * The name of the layer to be printed on
+           * @type {String}
+           */
+          layer: options.layer,
+
+          /**
+           * Stats
+           */
+          health: options.health,
+          attack: options.attack,
+
+          /**
+           * we could use the sprite class + css animations to animate our hero
+           * @type {String}
+           */
+          sprite: options.sprite,
+
+          position: {
+            x: options.start.x,
+            y: options.start.y
+          },
+
+          /**
+           * The hero's main update loop
+           */
+          update: function() {
+
+            // This apparently is a traditional pattern for a game engine
+            if(_events['mousedown']) {
+              var e = _events['mousedown']
+              // just some randomization before building actual movement
+              this.move(Math.floor((Math.random()*2)-0.5), Math.floor((Math.random()*2)-0.5));
+            }
+
+          },
+
+          /**
+           * Some helper functions
+           */
+          move: function(x , y) {
+            this.position.x = this.position.x + x;
+            this.position.y = this.position.y + y;
+            
+            if(this.position.x > WIDTH - 1) {
+              this.position.x = WIDTH - 1;
+            }
+            if(this.position.x < 0) {
+              this.position.x = 0;
+            }
+            if(this.position.y > HEIGHT - 1) {
+              this.position.y = HEIGHT - 1;
+            }
+            if(this.position.y < 0) {
+              this.position.y = 0;
+            }
+            
+            this.el.css('left', this.position.x + 'em');
+            this.el.css('top', this.position.y + 'em');
+          },
+          moveTo: function(x , y) {
+            this.el.css('left', x + 'em');
+            this.el.css('top', y + 'em');
+          }
+
+        };
+
+        // we keep the hero in its html element to more easily keep track
+        $hero.data('game-object', newHero);
+
+        // make a new hero for the user!
+        return newHero;
+      }
+
+    })();
+    
+  });
+  </script>
+</body>
+</html>
