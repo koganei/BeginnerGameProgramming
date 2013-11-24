@@ -35,6 +35,7 @@
         /* clips to bottom */
       font-size: 32px;
       -webkit-transform-origin: 100% 0;
+      -webkit-transform: scale(1);
 
 
     }
@@ -280,10 +281,14 @@
       var rotation = 0;
       $('body').keydown(function(e) {
         
-        if(e.keyCode == 32) { //space
+        if(e.keyCode == 32) { //space 
           e.preventDefault();
           // rotate the camera
-          $('#world').css('-webkit-transform', 'rotateY(' + rotation + 'deg)')
+          // $('#world').css('-webkit-transform', 'rotateY(' + rotation + 'deg)')
+          var $map = $('#map');
+          var $mapChildren = $map.children('.tile');
+          $map.append($mapChildren.get().reverse());
+
           rotation++;
         }
       });
