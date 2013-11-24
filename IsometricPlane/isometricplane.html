@@ -278,18 +278,14 @@
         }
       });
 
-      var rotation = 0;
       $('body').keydown(function(e) {
         
         if(e.keyCode == 32) { //space 
           e.preventDefault();
-          // rotate the camera
-          // $('#world').css('-webkit-transform', 'rotateY(' + rotation + 'deg)')
+          // we can rotate the camera by reversing the order of all the tiles in the map
           var $map = $('#map');
           var $mapChildren = $map.children('.tile');
           $map.append($mapChildren.get().reverse());
-
-          rotation++;
         }
       });
 
