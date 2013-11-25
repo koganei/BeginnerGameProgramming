@@ -92,6 +92,14 @@
       height: 1em;
     }
 
+    .character {
+      position: absolute;
+      background: red;
+      width: 1em;
+      height: 1em;
+      border-radius: 50%;
+    }
+
     
   </style>
   <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
@@ -116,6 +124,8 @@
        * 
        */
       
+      // just a helper function for handlign objects
+      var count = function(obj) { return Object.keys(obj).length; }
 
       /**
        * We make a quick default map
@@ -123,14 +133,17 @@
        */
       var defaultMap = (function() {
         var returnedMap = [];
-        var groundHeight = 5;
+        var groundHeight = 2;
 
         //create ground
         for (var x = 500; x >= 0; x--) {
-          for(var y = Math.floor((Math.random()*3) + 5); y >= 0; y--) {
+          for(var y = Math.floor((Math.random()*3) + groundHeight); y >= 0; y--) {
             // for every every column, we add 5 blocks of rock
             // [ TOTALHEIGHT * TOTALWIDTH - CURRENT HEIGHT - CURRENT WIDTH ]
             returnedMap[ ((500 * 20) - (500 * y)) - (50 + x) ] = {
+                physics: {
+                  'stopCharacter': true
+                },
                 sprite: (Math.floor((Math.random()*50))) ? 'rock' : 'grass'
             };
           }
@@ -209,8 +222,9 @@
              * Tell all objects to update
              */
             update : function() {
-              this.component.map.update();
-              this.component.objects.update();
+              this.module.map.update();
+              this.module.objects.update();
+              this.module.camera.update();
             },
 
             /**
@@ -218,9 +232,20 @@
              */
 
             init: function() {
-              this.component.input.init();
-              this.component.map.init();
-              this.startLoop();
+              this.module.input.init();
+              this.module.map.init();
+              this.module.camera.init();
+
+              // we create a character
+              var hero = game.module.characters.create({
+                name: 'hero'
+              });
+              this.module.objects.add(hero, hero.layer);
+
+              this.startLoop(); 
+
+
+
             }
 
 
@@ -228,53 +253,82 @@
 
       /**
        * to make it more modular and clean, we make a new class/namespace for handling objects.
-       * These are not however the only components I'm refering to
-       * We'll also make components for game objects
        */
-      game.component = {};
+      game.module = {};
 
       /**
        * So we'll make a list of all possible input actions, and then we'll make event handlers to turn
        * them on and off.
        * @type {Object}
        */
-      game.component.input = {
+      game.module.input = {
         /**
          * A list of all the input events
          * @type {Object}
          */
         _inputs : {
           CAMERA_LEFT: false,
-          CAMERA_RIGHT: false
+          CAMERA_RIGHT: false,
+          PLAYER_LEFT: false,
+          PLAYER_RIGHT: false,
+          PLAYER_JUMP: false
         },
 
         init: function() {
-          var inputComponent = this;
+          var inputModule = this;
 
           $('body').keydown(function(e) {
             switch(e.keyCode) {
-              case 37: // LEFT ARROW
-                inputComponent._inputs.CAMERA_LEFT = e;
+              case 38: // LEFT ARROW
+                inputModule._inputs.CAMERA_LEFT = e;
                 break;
 
-              case 39: // RIGHT ARROW
-                inputComponent._inputs.CAMERA_RIGHT = e;
+              case 40: // RIGHT ARROW
+                inputModule._inputs.CAMERA_RIGHT = e;
+                break;
+
+              case 37: // UP ARROW
+                inputModule._inputs.PLAYER_LEFT = e;
+                break;
+
+              case 39: // DOWN ARROW
+                inputModule._inputs.PLAYER_RIGHT = e;
+                break;
+
+              case 32: // SPACE
+                inputModule._inputs.PLAYER_JUMP = e;
                 break;
 
               default:
-                //console.log('key pressed: ', e.keyCode);
+                // console.log('key pressed: ', e.keyCode);
             }
           });
 
           $('body').keyup(function(e) {
             switch(e.keyCode) {
-              case 37: // LEFT ARROW
-                inputComponent._inputs.CAMERA_LEFT = false;
+              case 38: // LEFT ARROW
+                inputModule._inputs.CAMERA_LEFT = false;
                 break;
 
-              case 39: // RIGHT ARROW
-                inputComponent._inputs.CAMERA_RIGHT = false;
+              case 40: // RIGHT ARROW
+                inputModule._inputs.CAMERA_RIGHT = false;
                 break;
+
+              case 37: // UP ARROW
+                inputModule._inputs.PLAYER_LEFT = false;
+                break;
+
+              case 39: // DOWN ARROW
+                inputModule._inputs.PLAYER_RIGHT = false;
+                break;
+
+              case 32: // SPACE
+                inputModule._inputs.PLAYER_JUMP = false;
+                break;
+
+
+              default:
+                console.log(e.keyCode);
             }
           });
         },
@@ -288,7 +342,7 @@
 
       },
 
-      game.component.objects = {
+      game.module.objects = {
 
         /**
          * contains a list of layers.
@@ -301,13 +355,35 @@
         layers : {},
 
         /**
+         * I figured I'd use a very basic layer implementation
+         * @param {[type]} layer [description]
+         */
+        addLayer: function(layer, zIndex) {
+          if(!(this.layers[layer] instanceof Array)) {
+            if(!zIndex) {
+              // so crude!
+              zIndex = count(this.layers) + 5;
+            }
+
+            this.layers[layer] = [];
+
+            var $layer = '<div class="layer" id="layer-' + layer + '" z-index="' + zIndex + '"></div>';
+            game.$el.append($layer);
+          }
+        },
+
+        /**
          * We add the object to the layer, and then to the DOM if the object has an element
          * @param {Object} object
          * @param {String} layer
          */
         add : function(object, layer) {
-          if(layer && this.layers[layer] instanceof Array) {
-            
+          
+          if(layer) {
+            if(!(this.layers[layer] instanceof Array)) {
+              this.addLayer(layer);
+            }
+
             // warn the user if the object already exists
             if(typeof this.layers[layer][object.name] === 'object') {
               console.warn('There is already an object with name: ' + object.name);
@@ -318,7 +394,11 @@
 
             // output to DOM
             if(object.$el) {
-              this.$el.find('#layer-' + layer).append(object.$el);  
+              if(!game.$el.find('#layer-' + layer).length) {
+                this.addLayer(layer);
+              }
+
+              game.$el.find('#layer-' + layer).append(object.$el);  
             }
           }
         },
@@ -354,7 +434,7 @@
               // loop over objects in the layer
               for(var o in layer) {
                 if(layer.hasOwnProperty(o)) {
-                  var obj = later[o];
+                  var obj = layer[o];
 
                   // update if the object has such a function.
                   if(typeof obj.update === 'function') {
@@ -374,7 +454,7 @@
        * with a default tile for when there are no objects. I won't do the border of terrains, even
        * though I have the sprites for them, it's just a lot of nitpicky stuff. Maybe on the next engine.
        */
-      game.component.map = {
+      game.module.map = {
 
         options : {
           // we'll basically make it into a side scroller by doing this.
@@ -393,6 +473,15 @@
          */
         _map : game.options.map || [],
 
+        _systemTiles: {
+          NO_LEVEL: {
+            physics: {
+              'type': 'NO_LEVEL',
+              'stopCharacter': true
+            }
+          }
+        },
+
 
         /**
          * get the tile object from the map at this
@@ -401,15 +490,24 @@
          * @return {[type]}
          */
         getTile: function(position) {
-          return this._map[(game.component.map.options.width * position.y) + position.x];
+          return this._map[(game.module.map.options.width * position.y) + position.x];
+        },
+
+        getSurroundingTiles: function(position) {
+          return {
+            up:   position.y - 1 <= 0 ? this._systemTiles.NO_LEVEL : this._map[(game.module.map.options.width * (position.y - 1)) + position.x],
+            down: position.y + 1 >= game.module.map.options.height ? this._systemTiles.NO_LEVEL : this._map[(game.module.map.options.width * (position.y + 1)) + position.x],
+            left: position.x - 1 <= 0 ? this._systemTiles.NO_LEVEL : this._map[(game.module.map.options.width * (position.y)) + position.x - 1],
+            right: position.x + 1 >= game.module.map.options.width ? this._systemTiles.NO_LEVEL : this._map[(game.module.map.options.width * (position.y)) + position.x + 1]
+          };
         },
 
         /**
-         * the map will update at every frame, and render its camera
+         * I originally put the camera in the map, but then realized that it's
+         * easier to have the camera update the position of all the objects in the scene.
          * @return {[type]}
          */
         update: function() {
-          this.camera.render();
         },
 
         /**
@@ -417,11 +515,6 @@
          * @return {[type]}
          */
         init: function() {
-          this.initComponents();
-        },
-
-        initComponents: function() {
-          this.camera.init();
         }
 
 
@@ -433,7 +526,7 @@
        * want to place the camera again. but if there are any effects on them, it works pretty well!
        * @type {Object}
        */
-      game.component.map.camera = {
+      game.module.camera = {
 
         _tiles : [],
 
@@ -464,7 +557,7 @@
         position: {
           // side-scroller, no need for y axis
           // but we'll start it in the middle to be Metroidy.
-          x: 0 // game.component.map.options.width / 2 
+          x: game.module.map.options.width / 2 
         },
 
         cameraToMapCoordinates: function(position) {
@@ -486,20 +579,45 @@
          * tell tiles how to be styled according to the map
          * @return {[type]}
          */
-        render: function() {
+        update: function() {
           this.processInputs();
           this.updateTiles();
+          this.updateObjects();
         },
 
         processInputs: function() {
-          if(game.component.input.isPressed('CAMERA_LEFT')) {
+          if(game.module.input.isPressed('CAMERA_LEFT')) {
             // move the camera left
             if(this.position.x != 0) {
               this.position.x--;
             }
-          } else if(game.component.input.isPressed('CAMERA_RIGHT')) {
-            if(this.position.x != game.component.map.options.width - this.width) {
+          } else if(game.module.input.isPressed('CAMERA_RIGHT')) {
+            if(this.position.x != game.module.map.options.width - this.width) {
               this.position.x++;
+            }
+          }
+        },
+
+        updateObjects: function() {
+          // loop over layers
+          for(var l in game.module.objects.layers) {
+            if(l != "static" && game.module.objects.layers.hasOwnProperty(l)) {
+              var layer = game.module.objects.layers[l];
+
+              // loop over objects in the layer
+              for(var o in layer) {
+                if(layer.hasOwnProperty(o)) {
+                  var obj = layer[o];
+
+                  // place the object in css according to its position
+                  
+                  if(obj.hasOwnProperty('position') && obj.$el.length) {
+                    objCameraPosition = this.mapToCameraCoordinates(obj.position);
+                    obj.$el.css('left', objCameraPosition.x + 'em');
+                    obj.$el.css('top', objCameraPosition.y + 'em');
+                  }
+                }
+              }
             }
           }
         },
@@ -514,7 +632,7 @@
               x           = i % this.width,
               y           = Math.floor(i / this.width),
               coordsOnMap = this.cameraToMapCoordinates({x: x, y: y}),
-              tileObj     = game.component.map.getTile(coordsOnMap),
+              tileObj     = game.module.map.getTile(coordsOnMap),
               tileClass   = (tileObj && tileObj.sprite) ? tileObj.sprite : this._defaultTile,
               oldSprite   = this._tiles[i].data('sprite');
 
@@ -553,7 +671,7 @@
             // create a div for every tile
             
             var coordsOnMap = this.cameraToMapCoordinates({x: x, y: y});
-            var tileObj = game.component.map.getTile(coordsOnMap);
+            var tileObj = game.module.map.getTile(coordsOnMap);
 
             var tileClass = (tileObj && tileObj.sprite) ? tileObj.sprite : this._defaultTile;
             
@@ -577,8 +695,121 @@
 
       };
 
+      /**
+       * so in the character module, we put a character generator and other character handlers.
+       * a character will have components to give it certain behaviours.
+       */
+      game.module.characters = {
+        _characters : {},
+
+        create: function( options, components ) {
+          // maybe I will just check if any object in game.module.objects does anything
+          if(options && this._characters.hasOwnProperty(options.name)) {
+            console.error('ComponentEngine [module.characters]: The character name "' + options.name +'" already exists');
+            return false;
+          }
+
+          var defaultCharacter = {
+            
+            /**
+             * We create a default non-repeating name
+             * @type {String}
+             */
+            name: 'EmptyCharacter' + Object.keys(this._characters).length,
+
+            sprite: 'character-default',
+
+            $el: $('<div class="character"></div>'),
+
+            /**
+             * I wasn't sure whether to use the map position or the camera position for this.
+             * I ended up using the map position after I realized that the camera should be its own module
+             * when I had originally put it inside of the map for it to only render the map.
+             * my camera really becomes a full fledged renderer, I suppose.
+             * @type {Object}
+             */
+            position: {
+              x: game.module.map.options.width / 2,
+              y: game.module.map.options.height / 2
+            },
+
+            /**
+             * @type {String}
+             */
+            layer: 'character',
+
+            update: function() {
+                var surroundingTiles = game.module.map.getSurroundingTiles({
+                    x: this.position.x,
+                    y: this.position.y
+                });
+
+                // crude gravity
+                if(typeof surroundingTiles.down === 'undefined' || !surroundingTiles.down.physics.stopCharacter) {
+                  this.move({x: 0, y: 1});
+                }
+
+                // player movement
+                if(game.module.input.isPressed('PLAYER_LEFT') && (typeof surroundingTiles.left === 'undefined' || !surroundingTiles.left.physics.stopCharacter)) {
+                  this.move({x: -1, y: 0});
+                }
+                if(game.module.input.isPressed('PLAYER_RIGHT') && (typeof surroundingTiles.right === 'undefined' || !surroundingTiles.right.physics.stopCharacter)) {
+                  this.move({x: 1, y: 0});
+                }
+                if(game.module.input.isPressed('PLAYER_JUMP') && (typeof surroundingTiles.up === 'undefined' || !surroundingTiles.up.physics.stopCharacter)) {
+                  this.move({x: 0, y: -5});
+                }
+
+                
+
+
+            },
+
+            /**
+             * I prefer to have move() for relative movement and moveTo() for absolute movement within the map
+             * @param  {Object} translation object with x and y as properties
+             */
+            move: function(translation) {
+              
+              if(this.position.x + translation.x < 0 ) { this.position.x = 0; return; }
+              if(this.position.y + translation.y < 0 ) { this.position.y = 0; return; }
+              if(this.position.x + translation.x > game.module.map.width ) { this.position.x = game.module.map.width; return; }
+              if(this.position.y + translation.y > game.module.map.height ) { this.position.y = game.module.map.height; return; }
+
+              this.position.x += translation.x;
+              this.position.y += translation.y;
+            },
+
+            moveTo: function(position) {
+              if(position.x < 0 ) { this.position.x = 0; return; }
+              if(position.y < 0 ) { this.position.y = 0; return; }
+              if(position.x > game.module.map.width ) { this.position.x = game.module.map.width; return; }
+              if(position.y > game.module.map.height ) { this.position.y = game.module.map.height; return; }
+
+              this.position.x = position.x;
+              this.position.y = position.y;
+            },
+
+            toLayer: function(layer) {
+
+            }
+          };
+
+          // we replace any defaults with the options
+          newCharacter = $.extend(defaultCharacter, options);
+          
+          // we put in the right sprite on init
+          newCharacter.$el.addClass('sprite-' + newCharacter.sprite).data('sprite', newCharacter.sprite);
+
+          // add to list of characters
+          this._characters[newCharacter.name] = newCharacter;
+          
+          return newCharacter;
+        }
+      };
+
       game.init();
-      // window.myGame = game();
+      window.myGame = game;
     })();
   });
   </script>
