@@ -235,6 +235,7 @@
 </head>
 
 <body>
+  <div id="#debug" style="position: absolute; top: 0; left: 0; width: 200px; background: rgba(255, 255, 255, 0.1);">Press any key to stop animation.<br/>Press space to rotate view 180 degrees.</div>
   <div id="world">
     <div class="layer">
       <div class="hero"></div>
@@ -268,6 +269,7 @@
     $(function() {
       
       var $tiles = $('.tile');
+      window.tiles = $tiles;
 
 
       $tiles.click(function() {
@@ -295,6 +297,33 @@
         setTimeout(randomNoise, 16.6);
       };
       // randomNoise();
+       
+      window.rotateEnabled = true;
+      $('body').keydown(function() {
+        window.rotateEnabled = false;
+      });
+      
+      window.rotateRows = function() {
+        var tiles = $tiles;
+        for (var i = $tiles.length; i >= 0; i--) {
+          setTimeout(function(j) {
+            if(window.rotateEnabled) {
+              tiles.eq(j).attr('data-height', 3 - Math.floor(j%4));
+            }
+          }, 20 * i, i);
+        };
+
+        for (var k = $tiles.length; k >= 0; k--) {
+          setTimeout(function(l) {
+            if(window.rotateEnabled) {
+              tiles.eq(l).attr('data-height', Math.floor(l%4));  
+            }
+            
+          }, (20 * k) + (20 * $tiles.length), k);
+        };
+        $tiles
+      };
+      rotateRows();
       
     });
   </script>
