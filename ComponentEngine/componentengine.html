@@ -575,10 +575,14 @@
          */
         _map : game.options.map || [],
 
+        /**
+         * Some fake tiles to use for 'hard' tiles
+         * @type {Object}
+         */
         _systemTiles: {
           NO_LEVEL: {
+            'type': 'NO_LEVEL',
             physics: {
-              'type': 'NO_LEVEL',
               'stopCharacter': true
             }
           }
@@ -1072,8 +1076,12 @@
             if(game.module.input.isPressed('PLAYER_JUMP')
               && (typeof surroundingTiles.up === 'undefined' || !surroundingTiles.up.physics.stopCharacter)
               && (typeof surroundingTiles.down !== 'undefined' && surroundingTiles.down.physics.stopCharacter)
+              && !this.jumping
               ) {
+              this.jumping = true;
               character.move({x: 0, y: -5});
+            } else if(!game.module.input.isPressed('PLAYER_JUMP') && this.jumping && typeof surroundingTiles.down !== 'undefined' && surroundingTiles.down.physics.stopCharacter) {
+              this.jumping = false;
             }
 
           }
@@ -1090,27 +1098,28 @@
         return {
           name: name,
 
-          _isShooting: false,
+          _isAttacking: false,
 
           init: function(character) {
             // we can do things here like set which action is used for it (like PLAYER_ATTACK)
           },
 
           update: function(character) {
-            var isShooting = this._isShooting;
+            var isAttacking = this._isAttacking;
 
-            if(game.module.input.isPressed('PLAYER_ATTACK') && !isShooting) {
-              this._isShooting = true;
-              // do some shooting
+            if(game.module.input.isPressed('PLAYER_ATTACK') && !isAttacking) {
+              this._isAttacking = true;
+              // do some Attacking
 
+              // we should probably check the character's weapon and render that
+              // rather than create a weapon outright here
               if(!$('#sword').length) {
                 $('<span class="attack-sword character-component" id="sword"></span>')
                   .appendTo(character.$el);
               }
 
-            } else if(!game.module.input.isPressed('PLAYER_ATTACK') && isShooting) {
-              console.log('what');
-              this._isShooting = false;
+            } else if(!game.module.input.isPressed('PLAYER_ATTACK') && isAttacking) {
+              this._isAttacking = false;
               $('#sword').remove();
             }
 
