@@ -6,9 +6,9 @@ I think I should mention that even though I'm using javascript, my goal here is 
 
 ## Files
 
-* [Hello, Engine!](https://github.com/koganei/BeginnerGameProgramming/blob/master/HelloEngine/helloengine.html "My First Engine!") ([Demo](http://rawgithub.com/koganei/BeginnerGameDesign/master/HelloEngine/helloengine.html))
+* [Hello, Engine!](https://github.com/koganei/BeginnerGameProgramming/blob/master/HelloEngine/helloengine.html "My First Engine!") ([Demo](http://rawgithub.com/koganei/BeginnerGameProgramming/master/HelloEngine/helloengine.html))
  * Click for random movement
-* [Component Engine](https://github.com/koganei/BeginnerGameProgramming/blob/master/ComponentEngine/componentengine.html "Design based on the Component Pattern") ([Demo](http://rawgithub.com/koganei/BeginnerGameDesign/master/ComponentEngine/componentengine.html))
+* [Component Engine](https://github.com/koganei/BeginnerGameProgramming/blob/master/ComponentEngine/componentengine.html "Design based on the Component Pattern") ([Demo](http://rawgithub.com/koganei/BeginnerGameProgramming/master/ComponentEngine/componentengine.html))
  * Left/right arrows + space bar for movement
-* [Isometric Plane in CSS](https://github.com/koganei/BeginnerGameProgramming/blob/master/IsometricPlane/isometricplane.html "The CSS for an isometric plane") ([Demo](http://rawgithub.com/koganei/BeginnerGameDesign/master/IsometricPlane/isometricplane.html))
+* [Isometric Plane in CSS](https://github.com/koganei/BeginnerGameProgramming/blob/master/IsometricPlane/isometricplane.html "The CSS for an isometric plane") ([Demo](http://rawgithub.com/koganei/BeginnerGameProgramming/master/IsometricPlane/isometricplane.html))
  * Click on tiles for height change
