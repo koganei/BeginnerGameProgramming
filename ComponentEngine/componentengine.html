@@ -203,6 +203,21 @@
       Space: jump<br />
       Z: attack
     </p>
+
+    <button type="button" id="pause" data-state="playing">Pause</button>
+    <script>
+      $('#pause').click(function() {
+        if($(this).data('state') == "playing") {
+          game.stopLoop();
+          $(this).data('state', 'paused');
+          $(this).text('Play');
+        } else {
+          game.startLoop();
+          $(this).data('state', 'playing');
+          $(this).text('Pause');
+        }
+      });
+    </script>
   </div>
 
   <script>
@@ -1129,7 +1144,7 @@
       };
 
       game.init();
-      window.myGame = game;
+      window.game = game;
     })();
   });
   </script>
