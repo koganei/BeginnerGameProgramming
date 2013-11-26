@@ -181,7 +181,7 @@
         height: 0.1em;
       }
 
-      .left .attack-sword:before {
+      .sprite-character-default-left .attack-sword:before {
         left: -1.1em;
       }
 
@@ -198,6 +198,11 @@
   </div>
   <div id="debug">
     <h1>Debug</h1>
+    <p>
+      Arrows: movement<br />
+      Space: jump<br />
+      Z: attack
+    </p>
   </div>
 
   <script>
@@ -733,8 +738,11 @@
          */
         changeSprite: function(obj, newSprite) {
           var oldSprite = obj.$el.data('sprite');
-          obj.$el.removeClass('sprite-' + oldSprite);
-          obj.$el.addClass('sprite-' + obj.sprites[newSprite]);
+          if(oldSprite != obj.sprites[newSprite]) {
+            obj.$el.removeClass('sprite-' + oldSprite);
+            obj.$el.addClass('sprite-' + obj.sprites[newSprite]);
+            obj.$el.data('sprite', obj.sprites[newSprite]);
+          }
         },
 
         updateTiles: function() {
