@@ -73,7 +73,8 @@
     }
 
     .tile {
-      float: left;
+      position: absolute;
+      /*  float: left; */
       width: 1em;
       height: 1em;
       background: #deb074;
@@ -83,8 +84,6 @@
 
       background-image: url('data:image/png;base64,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');
       background-position: 3em 0;
-
-
     }
 
       .tile-rock {
@@ -256,6 +255,8 @@
         }
       });
     </script>
+
+    <div id="fpsRate"></div>
   </div>
 
   <script>
@@ -273,6 +274,20 @@
       
       // just a helper function for handlign objects
       var count = function(obj) { return Object.keys(obj).length; }
+
+      /*
+       *
+       * We prepare the animation frame for all browsers
+       * I decided to switch to this to test performances
+       */
+      window.requestAnimFrame = (function(){
+        return  window.requestAnimationFrame       ||
+                window.webkitRequestAnimationFrame ||
+                window.mozRequestAnimationFrame    ||
+                function( callback ){
+                  window.setTimeout(callback, 1000 / 60);
+                };
+      })();
 
       /**
        * We make a quick default map
@@ -328,25 +343,50 @@
              */
             _loopId : false,
 
+            _frameTime: 0,
+
             /**
              * whether to update to next frame
              * @type {Boolean}
              */
             _loopEnabled : false,
 
+
+            /**
+             * The game goes too quickly for my taste, so we'll tweak it with this
+             * @type {Number}
+             */
+            // _gameSpeed: 20, // 100 = native speed
+
             /**
              * The main game loop
-             * @return {[type]}
              */
-            loop : function() {
-              this.update();
+            loop: function() {
+              var currentTime = performance.now();
+              requestAnimFrame(game.loop);
 
-              if(this._loopEnabled) {
-                this._loopId = setTimeout(function(g) {
-                  g.loop();
-                }, this.options.fpsRate, this);
+              if(game._loopEnabled) {
+                  game.update((currentTime - game._frameTime) * (game.options.fpsRate / 1000) );
               }
+
+              game._frameTime = performance.now();
             },
+            
+
+
+
+            /**
+             * The old loop that used setTimeout
+             */
+            // setTimeoutLoop : function() {
+            //   this.update();
+
+            //   if(this._loopEnabled) {
+            //     this._loopId = setTimeout(function(g) {
+            //       g.loop();
+            //     }, this.options.fpsRate, this);
+            //   }
+            // },
 
             /**
              * the function that will start the chain of setTimeouts.
@@ -368,10 +408,11 @@
             /**
              * Tell all objects to update
              */
-            update : function() {
-              this.module.map.update();
-              this.module.objects.update();
-              this.module.camera.update();
+            update : function(deltaTime) {
+              this.module.map.update(deltaTime);
+              this.module.objects.update(deltaTime);
+              this.module.camera.update(deltaTime );
+              this.module.debug.update(deltaTime);
             },
 
             /**
@@ -543,7 +584,7 @@
          * between layers
          * @type {Object}
          */
-        layers : {},
+        layers: {},
 
         /**
          * I figured I'd use a very basic layer implementation
@@ -613,11 +654,9 @@
             }
         },
 
-        /**
-         * All layers will update their objects except for the static layer
-         */
-        update : function() {
-          // loop over layers
+        each: function(fn, layer) {
+          if(layer) { return this.layers[layer]; }
+
           for(var l in this.layers) {
             if(l != "static" && this.layers.hasOwnProperty(l)) {
               var layer = this.layers[l];
@@ -630,6 +669,32 @@
                   // update if the object has such a function.
                   if(typeof obj.update === 'function') {
                     obj.update();
+                  }
+                }
+              }
+            }
+          }
+
+
+        },
+
+        /**
+         * All layers will update their objects except for the static layer
+         */
+        update : function(deltaTime) {
+          // loop over layers
+          for(var l in this.layers) {
+            if(l != "static" && this.layers.hasOwnProperty(l)) {
+              var layer = this.layers[l];
+
+              // loop over objects in the layer
+              for(var o in layer) {
+                if(layer.hasOwnProperty(o)) {
+                  var obj = layer[o];
+
+                  // update if the object has such a function.
+                  if(typeof obj.update === 'function') {
+                    obj.update(deltaTime);
                   }
                 }
               }
@@ -702,7 +767,7 @@
          * easier to have the camera update the position of all the objects in the scene.
          * @return {[type]}
          */
-        update: function() {
+        update: function(deltaTime) {
         },
 
         /**
@@ -774,13 +839,13 @@
          * tell tiles how to be styled according to the map
          * @return {[type]}
          */
-        update: function() {
-          this.processInputs();
-          this.updateTiles();
-          this.updateObjects();
+        update: function(deltaTime) {
+          this.processInputs(deltaTime);
+          this.updateTiles(deltaTime);
+          this.updateObjects(deltaTime);
         },
 
-        processInputs: function() {
+        processInputs: function(deltaTime) {
           // if(game.module.input.isPressed('CAMERA_LEFT')) {
           //   // move the camera left
           //   game.module.camera.move(-1);
@@ -798,7 +863,7 @@
           }
         },
 
-        updateObjects: function() {
+        updateObjects: function(deltaTime) {
           // loop over layers
           for(var l in game.module.objects.layers) {
             if(l != "static" && game.module.objects.layers.hasOwnProperty(l)) {
@@ -846,7 +911,7 @@
           }
         },
 
-        updateTiles: function() {
+        updateTiles: function(deltaTime) {
 
           var mapSize = this.width * this.height;
 
@@ -887,8 +952,8 @@
 
           var mapSize = this.width * this.height;
           for(var i = 0; i < mapSize; i++) {
-            var x = Math.floor(i / this.width);
-            var y = i % this.width;
+            var x = i % this.width;
+            var y = Math.floor(i / this.width);
 
             //console.log(x, y);
             
@@ -901,7 +966,9 @@
 
             this._tiles[i] = $('<div class="tile tile-'+ tileClass +'"></div>');
             this._tiles[i].data('sprite', tileClass);
-
+            this._tiles[i].css('left', x + 'em');
+            this._tiles[i].css('top', y + 'em');
+ 
             // break line at every WIDTH
             if((i % this.width) == 0) {
               this._tiles[i].addClass('edge');
@@ -913,6 +980,36 @@
 
           // add the map to the world
           game.$el.append($map);
+
+        }
+
+      };
+
+      /**
+       * I made this after the characters module but put it over it because the characters module is longer 
+       * and this is more self-contained
+       * @type {Object}
+       */
+      game.module.collider = {
+        name: 'Collider Module',
+
+        /**
+         * An array to hold all of this frame's collisions.
+         * I'm not sure if this is actually useful, but will comment it out if it's not used
+         * @type {Array}
+         */
+        _collisions: [],
+
+        init: function() {
+            // nothing to do
+        },
+
+        /**
+         * a collider will go through all the world's objects and check for collisions
+         * if the object has a collide method, we call it.
+         * @return {[type]} [description]
+         */
+        update: function(deltaTime) {
 
         }
 
@@ -979,6 +1076,8 @@
 
             facing: 1, // right: 1, left: -1
 
+            speed: 0.7,
+
             /**
              * we make a copy of component
              * (essentially a "new game.module.component()" if had made it into a generator)
@@ -1004,8 +1103,14 @@
              */
             layer: 'character',
 
-            update: function() {
-                this.component.update(this);
+            update: function(deltaTime) {
+              this.component.update(deltaTime, this);
+            },
+
+            collide: function() {
+              this.component.each(function(component) {
+                console.log('colling with', this, component);
+              });
             },
 
             /**
@@ -1099,13 +1204,13 @@
           return this._components[name];
         },
 
-        update: function() {
+        update: function(deltaTime) {
           // we update every component
           this.parent.surroundingTiles = game.module.map.getSurroundingTiles({
               x: this.parent.position.x,
               y: this.parent.position.y
           });
-          this.each(function(c) { c.update(this.parent); })
+          this.each(function(c) { c.update(deltaTime, this.parent); })
         },
 
         init: function(character) {
@@ -1151,12 +1256,13 @@
             character.sprites = $.extend(movementSprites, character.sprites);
           },
 
-          update: function(character) {
+          update: function(deltaTime, character) {
             var surroundingTiles = character.surroundingTiles;
 
             // player movement
             if(game.module.input.isPressed('PLAYER_LEFT') && (typeof surroundingTiles.left === 'undefined' || !surroundingTiles.left.physics.stopCharacter)) {
               game.module.camera.move(-1);
+              console.log(-1);
               character.move({x: -1, y: 0});
               character.facing = -1;
               game.module.characters.changeSprite(character, name + '-left');
@@ -1203,7 +1309,7 @@
             // we can do things here like set which action is used for it (like PLAYER_ATTACK)
           },
 
-          update: function(character) {
+          update: function(deltaTime, character) {
             var isAttacking = this._isAttacking;
 
             if(game.module.input.isPressed('PLAYER_ATTACK') && !isAttacking) {
@@ -1222,6 +1328,10 @@
               $('#sword').remove();
             }
 
+          },
+
+          collide: function(character, collider) {
+            console.log(character, 'collided with', collider);
           }
         };
         
@@ -1240,7 +1350,7 @@
             // we can do things here like set which action is used for it (like PLAYER_ATTACK)
           },
 
-          update: function(character) {
+          update: function(deltaTime, character) {
             // crude gravity
             if(typeof character.surroundingTiles.down === 'undefined' || !character.surroundingTiles.down.physics.stopCharacter) {
               character.move({x: 0, y: 1});
@@ -1277,7 +1387,7 @@
             character.sprites = $.extend(movementSprites, character.sprites);
           },
 
-          update: function(character) {
+          update: function(deltaTime, character) {
             var surroundingTiles = character.surroundingTiles;
             var userCanGo = [];
 
@@ -1314,9 +1424,40 @@
             character.move({x: character.facing, y: 0});
             if(this._stuckCounter > 0) this._stuckCounter--;
           }
-        };
-        
+        };        
       };
+
+
+
+
+
+
+
+
+
+
+      /**
+         * GAME DEBUG
+         */
+        game.module.debug = {
+          name: 'Debug Module',
+
+          _framesFps: [],
+
+          init: function() {
+
+          },
+
+          update: function(deltaTime) {
+                        
+            if(this._framesFps.length > 60) {
+              this._framesFps.shift();
+            }
+            this._framesFps.push( 60 * deltaTime );
+
+            $('#fpsRate').text( Math.floor(this._framesFps.reduce(function(pv, cv) { return pv + cv; }, 0) / this._framesFps.length * 10)/10 + ' FPS');
+          }
+        }
 
       game.init();
       window.game = game;
