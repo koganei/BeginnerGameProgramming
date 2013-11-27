@@ -124,6 +124,7 @@
       .character:before {
         display: inline-block;
         content: "";
+        position: relative;
 
       }
 
@@ -159,6 +160,39 @@
           @-webkit-keyframes hero-walk-right {
             from { background-position: 0 160px; }
             to   { background-position: 192px 160px; }
+          }
+
+      .sprite-monster-default:before,
+      .sprite-monster-default-left:before,
+      .sprite-monster-default-right:before {
+        width: 54px;
+        height: 72px;
+        top: -25px;
+        left: -12px;
+        background-image: url('data:image/png;base64,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');
+        background-position: 0 0;
+        -webkit-transform: scale(0.9);
+        
+      }
+
+        .sprite-monster-default-right:before {
+          background-position: 0 216px;
+          -webkit-animation: monster-walk-right 0.5s steps(3) infinite alternate;
+        }
+
+          @-webkit-keyframes monster-walk-right {
+            from { background-position: 0 216px; }
+            to   { background-position: 162px 216px; }
+          }
+
+        .sprite-monster-default-left:before {
+          background-position: 0 72px;
+          -webkit-animation: monster-walk-left 0.5s steps(3) infinite alternate;
+        }
+
+          @-webkit-keyframes monster-walk-left {
+            from { background-position: 0 72px; }
+            to   { background-position: 162px 72px; }
           }
 
 
@@ -348,8 +382,44 @@
               // we create a character
               var hero = game.module.characters.create({
                 name: 'hero'
-              });
-              this.module.objects.add(hero, hero.layer);
+              }, [{
+                name: 'gravity',
+                component: Components.characterGravity
+              }, {
+                name: 'movement',
+                component: Components.characterMovement
+              }, {
+                name: 'attack',
+                component: Components.characterAttack
+              }]);
+              this.module.objects.add(hero);
+
+
+              // we'll make some monsters too
+              // position them randomly in the world
+              for (var i = 25; i >= 0; i--) {
+                var newMonster = game.module.characters.create({
+                  name: 'monster' + i,
+                  position: {
+                    x: Math.floor(Math.random() * game.module.map.options.width),
+                    y: Math.floor(Math.random() * game.module.map.options.height) - 5
+                  },
+                  sprite: 'monster-default',
+                  sprites: {
+                    'default': 'monster-default',
+                    'movement-left': 'monster-default-left',
+                    'movement-right': 'monster-default-right'
+                  }
+                }, [{
+                  name: 'gravity',
+                  component: Components.characterGravity
+                }, {
+                  name: 'movement',
+                  component: Components.characterRandomMovement
+                }]);
+
+                this.module.objects.add(newMonster);
+              };
 
               this.startLoop(); 
 
@@ -494,28 +564,28 @@
          * @param {Object} object
          * @param {String} layer
          */
-        add : function(object, layer) {
+        add : function(newObject) {
           
-          if(layer) {
-            if(!(this.layers[layer] instanceof Array)) {
-              this.addLayer(layer);
+          if(newObject.layer) {
+            if(!(this.layers[newObject.layer] instanceof Array)) {
+              this.addLayer(newObject.layer);
             }
 
             // warn the user if the object already exists
-            if(typeof this.layers[layer][object.name] === 'object') {
-              console.warn('There is already an object with name: ' + object.name);
+            if(typeof this.layers[newObject.layer][newObject.name] === 'object') {
+              console.warn('There is already an object with name: ' + newObject.name);
             }
 
             // save the object in the layer
-            this.layers[layer][object.name] = object;
+            this.layers[newObject.layer][newObject.name] = newObject;
 
             // output to DOM
-            if(object.$el) {
-              if(!game.$el.find('#layer-' + layer).length) {
-                this.addLayer(layer);
+            if(newObject.$el) {
+              if(!game.$el.find('#layer-' + newObject.layer).length) {
+                this.addLayer(newObject.layer);
               }
 
-              game.$el.find('#layer-' + layer).append(object.$el);  
+              game.$el.find('#layer-' + newObject.layer).append(newObject.$el);  
             }
           }
         },
@@ -739,9 +809,17 @@
                   if(obj.hasOwnProperty('position') && obj.$el.length) {
                     objCameraPosition = this.mapToCameraCoordinates(obj.position);
 
-                    // we only replace it if it's different
-                    obj.$el.css('left', objCameraPosition.x + 'em');
-                    obj.$el.css('top', objCameraPosition.y + 'em');
+                    // we only replace it if it's within the view of the screen
+                    if(
+                      objCameraPosition.x > 0 && objCameraPosition.x < game.module.camera.width &&
+                      objCameraPosition.y > 0 && objCameraPosition.y < game.module.camera.height
+                    ) {
+                      obj.$el.css('display', 'block');
+                      obj.$el.css('left', objCameraPosition.x + 'em');
+                      obj.$el.css('top', objCameraPosition.y + 'em');
+                    } else {
+                      obj.$el.css('display', 'none');
+                    }
                   }
                 }
               }
@@ -862,7 +940,7 @@
           game.module.camera.changeSprite(obj, newSprite);
         },
 
-        create: function( options, components ) {
+        create: function( options, addedComponents ) {
           // maybe I will just check if any object in game.module.objects exists
           if(options && this._characters.hasOwnProperty(options.name)) {
             console.error('ComponentEngine [module.characters]: The character name "' + options.name +'" already exists');
@@ -959,8 +1037,13 @@
           // we replace any defaults with the options
           newCharacter = $.extend(defaultCharacter, options);
 
-          newCharacter.component.add(Components.characterMovement('movement'));
-          newCharacter.component.add(Components.characterAttack('attack'));
+          for(var c in addedComponents ) {
+            var newComponent = addedComponents[c];
+
+            newCharacter.component.add(newComponent.component(newComponent.name)); // hah, that's not confusing at all
+          }
+          // newCharacter.component.add(Components.characterMovement('movement'));
+          // newCharacter.component.add(Components.characterAttack('attack'));
           newCharacter.component.init(newCharacter);
           
           // we put in the right sprite on init
@@ -994,7 +1077,7 @@
 
         add: function(component) {
           if(this._components.hasOwnProperty(component.name)) {
-            console.error('ComponentEngine [' + this.parent.name + ' ]: this object already has a component named ' + component.name)
+            console.error('ComponentEngine [' , this , ' ]: this object already has a component named ' + component.name)
             return;
           }
           this._components[component.name] = component;
@@ -1059,16 +1142,13 @@
             movementSprites[name + '-left']  = 'character-default-left';
             movementSprites[name + '-right'] = 'character-default-right';
 
-            character.sprites = $.extend(character.sprites, movementSprites);
+            // we don't let the init write over sprites defined by the character
+            // so we switch the usual extend order
+            character.sprites = $.extend(movementSprites, character.sprites);
           },
 
           update: function(character) {
             var surroundingTiles = character.surroundingTiles;
-
-            // crude gravity
-            if(typeof surroundingTiles.down === 'undefined' || !surroundingTiles.down.physics.stopCharacter) {
-              character.move({x: 0, y: 1});
-            }
 
             // player movement
             if(game.module.input.isPressed('PLAYER_LEFT') && (typeof surroundingTiles.left === 'undefined' || !surroundingTiles.left.physics.stopCharacter)) {
@@ -1105,7 +1185,7 @@
       };
 
       /**
-       * We make an attack animation
+       * We make an attack handler
        * @type {Object}
        */
       Components.characterAttack = function(name) {
@@ -1138,6 +1218,103 @@
               $('#sword').remove();
             }
 
+          }
+        };
+        
+      };
+
+      /**
+       * We make a simple gravity component for all our monsters/heroes
+       * @type {Object}
+       */
+      Components.characterGravity = function(name) {
+
+        return {
+          name: name,
+
+          init: function(character) {
+            // we can do things here like set which action is used for it (like PLAYER_ATTACK)
+          },
+
+          update: function(character) {
+            // crude gravity
+            if(typeof character.surroundingTiles.down === 'undefined' || !character.surroundingTiles.down.physics.stopCharacter) {
+              character.move({x: 0, y: 1});
+            }
+
+          }
+        };
+        
+      };
+
+
+      /**
+       * We'll start simple and make a component for basic movement
+       * @type {Object}
+       */
+      Components.characterRandomMovement = function(name) {
+
+
+
+        // I went back to doing a return, just because it looks
+        // less threatening than a deep copy
+        return {
+          name: name,
+
+          _stuckCounter: 0,
+
+          init: function(character) {
+            var movementSprites = {};
+
+            movementSprites[name + '-left']  = name + '-left';
+            movementSprites[name + '-right'] = name + '-right';
+
+            character.facing = Math.floor(Math.random() - 1);
+
+            // we don't let the init write over sprites defined by the character
+            // so we switch the usual extend order
+            character.sprites = $.extend(movementSprites, character.sprites);
+          },
+
+          update: function(character) {
+            var surroundingTiles = character.surroundingTiles;
+            var userCanGo = [];
+
+            if(this._stuckCounter == 3) {
+              console.log(this._stuckCounter);
+
+              character.move({x: 0, y: -5});
+              this._stuckCounter = 0;
+              return;
+            }
+
+            if(typeof surroundingTiles.left === 'undefined' || !surroundingTiles.left.physics.stopCharacter) {
+              userCanGo.push(1); // userCanGo[0] = left
+            }
+            if(typeof surroundingTiles.right === 'undefined' || !surroundingTiles.right.physics.stopCharacter) {
+              userCanGo.push(-1); // userCanGo[0 or 1] = right
+            }
+            if(!userCanGo.length) {
+              this._stuckCounter++;
+              // nowhere to go, go back to default
+              // game.module.characters.changeSprite(character, name + '-default');
+              return;
+            }
+
+            if(userCanGo.length == 1) {
+
+              this._stuckCounter++;
+              
+              // one direction to go, let's go that way.
+              character.move({x: userCanGo[0], y: 0});
+              character.facing = userCanGo[0];
+              game.module.characters.changeSprite(character, name + '-' + (userCanGo[0] > 0 ? 'right' : 'left' ));
+              return;
+            }
+
+            // go in the direction he's already facing
+            character.move({x: character.facing, y: 0});
+            this._stuckCounter = 0;
           }
         };
         
