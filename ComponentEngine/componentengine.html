@@ -113,12 +113,16 @@
       border-radius: 50%;
       text-align: center;
 
-      -webkit-transition: all 0.2s linear;
-         -moz-transition: all 0.2s linear;
-           -o-transition: all 0.2s linear;
-              transition: all 0.2s linear;
+      -webkit-transition: all 0.1s linear;
+         -moz-transition: all 0.1s linear;
+           -o-transition: all 0.1s linear;
+              transition: all 0.1s linear;
 
       
+    }
+
+    .sprite-character-default {
+
     }
 
       .character:before {
@@ -1254,13 +1258,10 @@
        */
       Components.characterRandomMovement = function(name) {
 
-
-
-        // I went back to doing a return, just because it looks
-        // less threatening than a deep copy
         return {
           name: name,
 
+          // I try to check if the character is stuck and then move it if need be
           _stuckCounter: 0,
 
           init: function(character) {
@@ -1280,24 +1281,21 @@
             var surroundingTiles = character.surroundingTiles;
             var userCanGo = [];
 
-            if(this._stuckCounter == 3) {
-              console.log(this._stuckCounter);
-
+            if(this._stuckCounter == 5) {
               character.move({x: 0, y: -5});
+              character.facing = Math.floor((Math.random() * 2) - 1);
               this._stuckCounter = 0;
               return;
             }
 
             if(typeof surroundingTiles.left === 'undefined' || !surroundingTiles.left.physics.stopCharacter) {
-              userCanGo.push(1); // userCanGo[0] = left
+              userCanGo.push(-1); // userCanGo[0] = left
             }
             if(typeof surroundingTiles.right === 'undefined' || !surroundingTiles.right.physics.stopCharacter) {
-              userCanGo.push(-1); // userCanGo[0 or 1] = right
+              userCanGo.push(1); // userCanGo[0 or 1] = right
             }
             if(!userCanGo.length) {
               this._stuckCounter++;
-              // nowhere to go, go back to default
-              // game.module.characters.changeSprite(character, name + '-default');
               return;
             }
 
@@ -1305,7 +1303,7 @@
 
               this._stuckCounter++;
               
-              // one direction to go, let's go that way.
+              // one direction to go
               character.move({x: userCanGo[0], y: 0});
               character.facing = userCanGo[0];
               game.module.characters.changeSprite(character, name + '-' + (userCanGo[0] > 0 ? 'right' : 'left' ));
@@ -1314,7 +1312,7 @@
 
             // go in the direction he's already facing
             character.move({x: character.facing, y: 0});
-            this._stuckCounter = 0;
+            if(this._stuckCounter > 0) this._stuckCounter--;
           }
         };
         
