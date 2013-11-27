@@ -245,6 +245,7 @@
     <script>
       $('#pause').click(function() {
         if($(this).data('state') == "playing") {
+          console.log(game.stopLoop);
           game.stopLoop();
           $(this).data('state', 'paused');
           $(this).text('Play');
@@ -363,10 +364,10 @@
              */
             loop: function() {
               var currentTime = performance.now();
-              requestAnimFrame(game.loop);
 
               if(game._loopEnabled) {
                   game.update((currentTime - game._frameTime) * (game.options.fpsRate / 1000) );
+                  requestAnimFrame(game.loop);
               }
 
               game._frameTime = performance.now();
@@ -402,6 +403,7 @@
              * Again, this is empty, could be filled.
              */
             stopLoop : function() {
+              this._loopEnabled = false;
               clearTimeout(this._loopId);
             },
 
